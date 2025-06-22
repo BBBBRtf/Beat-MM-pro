@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BeatMM Pro - 缅甸最潮DJ音乐社区</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #1a1a2e;
+            --bg-card: rgba(30, 30, 50, 0.6);
+            --text-primary: #ffffff;
+            --text-secondary: #b0b0b0;
+            --accent-purple: #8b5cf6;
+            --accent-blue: #3b82f6;
+            --accent-pink: #ec4899;
+            --accent-green: #10b981;
+            --accent-orange: #f59e0b;
+            --accent-red: #ef4444;
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --led-glow: 0 0 20px currentColor, 0 0 40px currentColor, 0 0 60px currentColor;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 50%, #16213e 100%);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* 彩色LED玻璃框效果 */
+        .led-glass-frame {
+            background: linear-gradient(145deg, 
+                rgba(139, 92, 246, 0.1) 0%,
+                rgba(59, 130, 246, 0.1) 25%,
+                rgba(236, 72, 153, 0.1) 50%,
+                rgba(16, 185, 129, 0.1) 75%,
+                rgba(245, 158, 11, 0.1) 100%);
+            backdrop-filter: blur(20px);
+            border: 1px solid;
+            border-image: linear-gradient(45deg, 
+                var(--accent-purple), 
+                var(--accent-blue), 
+                var(--accent-pink), 
+                var(--accent-green), 
+                var(--accent-orange)) 1;
+            border-radius: 16px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .led-glass-frame::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, 
+                transparent 30%, 
+                rgba(255, 255, 255, 0.1) 50%, 
+                transparent 70%);
+            animation: shimmer 3s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        @keyframes shimmer {
+            0%, 100% { transform: translateX(-100%); }
+            50% { transform: translateX(100%); }
+        }
+
+        /* 轻盈的动画效果 */
+        .float-animation {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* 登录界面 */
+        .login-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+        }
+
+        .language-selector {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .lang-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 20px;
+            background: var(--glass-bg);
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+        }
+
+        .lang-btn:hover, .lang-btn.active {
+            background: var(--accent-blue);
+            box-shadow: var(--led-glow);
+            color: white;
+        }
+
+        .login-form {
+            width: 100%;
+            max-width: 400px;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, var(--accent-purple), var(--accent-blue), var(--accent-pink));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            margin-bottom: 40px;
+            font-size: 1.1rem;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 15px 20px;
+            border: none;
+            border-radius: 12px;
+            background: var(--glass-bg);
+            color: var(--text-primary);
+            font-size: 16px;
+            backdrop-filter: blur(10px);
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+        }
+
+        .form-input::placeholder {
+            color: var(--text-secondary);
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(45deg, var(--accent-purple), var(--accent-blue));
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(139, 92, 246, 0.4);
+        }
+
+        .login-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .register-link {
+            color: var(--accent-blue);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .register-link:hover {
+            color: var(--accent-purple);
+        }
+
+        /* 主应用界面 */
+        .app-container {
+            display: none;
+            min-height: 100vh;
+        }
+
+        .app-header {
+            padding: 20px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .app-logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, var(--accent-purple), var(--accent-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .wallet-balance {
+            padding: 8px 16px;
+            background: var(--accent-orange);
+            border-radius: 20px;
+            font-weight: 600;
+            color: white;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--accent-purple);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .icon-btn {
+            width: 40px;
+            height: 40px;
+            border: none;
+            border-radius: 50%;
+            background: var(--glass-bg);
+            color: var(--text-primary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+        }
+
+        .icon-btn:hover {
+            background: var(--accent-green);
+            color: white;
+            transform: scale(1.1);
+        }
+
+        /* 主内容区域 */
+        .main-content {
+            padding: 20px;
+        }
+
+        .current-playing {
+            margin-bottom: 30px;
+            padding: 20px;
+            border-radius: 16px;
+            position: relative;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .music-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .music-card {
+            padding: 20px;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .music-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .music-info h3 {
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+        }
+
+        .music-info p {
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+        }
+
+        .music-stats {
+            display: flex;
+            gap: 15px;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        /* 底部导航 */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid var(--glass-border);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.3s ease;
+            font-size: 0.8rem;
+        }
+
+        .nav-item.active, .nav-item:hover {
+            color: var(--accent-blue);
+        }
+
+        .nav-item i {
+            font-size: 1.2rem;
+        }
+
+        /* 加载动画 */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* 错误消息 */
+        .error-message {
+            background: var(--accent-red);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            display: none;
+        }
+
+        .success-message {
+            background: var(--accent-green);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            display: none;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .login-form {
+                padding: 20px;
+            }
+            
+            .music-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .main-content {
+                padding-bottom: 100px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 登录界面 -->
+    <div id="loginContainer" class="login-container">
+        <div class="language-selector">
+            <button class="lang-btn active" onclick="setLanguage('zh')">中文</button>
+            <button class="lang-btn" onclick="setLanguage('en')">English</button>
+            <button class="lang-btn" onclick="setLanguage('my')">မြန်မာ</button>
+        </div>
+
+        <div class="login-form led-glass-frame float-animation">
+            <h1 class="logo" data-i18n="welcome">欢迎来到BeatMM Pro</h1>
+            <p class="subtitle" data-i18n="subtitle">缅甸最潮DJ音乐社区 - 专业版</p>
+
+            <div class="error-message" id="errorMessage"></div>
+            <div class="success-message" id="successMessage"></div>
+
+            <form id="loginForm">
+                <div class="form-group">
+                    <label class="form-label" data-i18n="phone">📱 手机号码</label>
+                    <input type="tel" class="form-input" id="phone" data-i18n-placeholder="phone_placeholder" placeholder="输入缅甸手机号码" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" data-i18n="password">🔒 密码</label>
+                    <input type="password" class="form-input" id="password" data-i18n-placeholder="password_placeholder" placeholder="输入密码" required>
+                </div>
+
+                <button type="submit" class="login-btn" id="loginBtn">
+                    <span data-i18n="login">立即登录</span>
+                </button>
+            </form>
+
+            <p>
+                <span data-i18n="no_account">没有账号？</span>
+                <a href="#" class="register-link" onclick="showRegister()" data-i18n="register">立即注册</a>
+            </p>
+        </div>
+    </div>
+
+    <!-- 主应用界面 -->
+    <div id="appContainer" class="app-container">
+        <header class="app-header">
+            <div class="app-logo">BeatMM Pro</div>
+            <div class="user-info">
+                <div class="wallet-balance" id="walletBalance">0 MMK</div>
+                <button class="icon-btn" onclick="showSettings()">
+                    <i class="fas fa-cog"></i>
+                </button>
+                <div class="user-avatar" id="userAvatar">U</div>
+                <button class="icon-btn" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <section class="current-playing led-glass-frame">
+                <h2 class="section-title">
+                    <i class="fas fa-play-circle"></i>
+                    <span data-i18n="now_playing">当前播放</span>
+                </h2>
+                <div id="currentPlayingContent">
+                    <!-- 当前播放内容将通过JavaScript动态加载 -->
+                </div>
+            </section>
+
+            <section>
+                <h2 class="section-title">
+                    <i class="fas fa-fire"></i>
+                    <span data-i18n="hot_music">热门音乐</span>
+                </h2>
+                <div class="music-grid" id="musicGrid">
+                    <!-- 音乐卡片将通过JavaScript动态加载 -->
+                </div>
+            </section>
+        </main>
+
+        <nav class="bottom-nav">
+            <a href="#" class="nav-item active">
+                <i class="fas fa-home"></i>
+                <span data-i18n="home">首页</span>
+            </a>
+            <a href="#" class="nav-item">
+                <i class="fas fa-search"></i>
+                <span data-i18n="search">搜索</span>
+            </a>
+            <a href="#" class="nav-item">
+                <i class="fas fa-music"></i>
+                <span data-i18n="music">音乐</span>
+            </a>
+            <a href="#" class="nav-item">
+                <i class="fas fa-heart"></i>
+                <span data-i18n="favorites">收藏</span>
+            </a>
+            <a href="#" class="nav-item">
+                <i class="fas fa-user"></i>
+                <span data-i18n="profile">我的</span>
+            </a>
+        </nav>
+    </div>
+
+    <script>
+        // 隐藏的超级管理员入口检测
+        let keySequence = [];
+        document.addEventListener('keydown', function(e) {
+            keySequence.push(e.key);
+            if (keySequence.length > 10) {
+                keySequence.shift();
+            }
+
+            // 检测 Ctrl+Shift+A 组合键
+            if (e.ctrlKey && e.shiftKey && e.key === 'A') {
+                e.preventDefault();
+                // 跳转到超级管理员控制台
+                window.open('/admin.html', '_blank');
+            }
+
+            // 检测连续按键序列 "BEATMM"
+            const sequence = keySequence.join('').toUpperCase();
+            if (sequence.includes('BEATMM')) {
+                window.open('/admin.html', '_blank');
+                keySequence = []; // 重置序列
+            }
+        });
+
+        // API配置
+        const API_BASE_URL = 'http://localhost:5001/api';
+        
+        // 全局状态
+        let currentUser = null;
+        let accessToken = null;
+        let currentLanguage = 'zh';
+
+        // 多语言支持
+        const translations = {
+            zh: {
+                welcome: '欢迎来到BeatMM Pro',
+                subtitle: '缅甸最潮DJ音乐社区 - 专业版',
+                phone: '📱 手机号码',
+                password: '🔒 密码',
+                phone_placeholder: '输入缅甸手机号码',
+                password_placeholder: '输入密码',
+                login: '立即登录',
+                no_account: '没有账号？',
+                register: '立即注册',
+                now_playing: '当前播放',
+                hot_music: '热门音乐',
+                home: '首页',
+                search: '搜索',
+                music: '音乐',
+                favorites: '收藏',
+                profile: '我的'
+            },
+            en: {
+                welcome: 'Welcome to BeatMM Pro',
+                subtitle: 'Myanmar\'s Hottest DJ Music Community - Pro',
+                phone: '📱 Phone Number',
+                password: '🔒 Password',
+                phone_placeholder: 'Enter Myanmar phone number',
+                password_placeholder: 'Enter password',
+                login: 'Login Now',
+                no_account: 'No account?',
+                register: 'Register Now',
+                now_playing: 'Now Playing',
+                hot_music: 'Hot Music',
+                home: 'Home',
+                search: 'Search',
+                music: 'Music',
+                favorites: 'Favorites',
+                profile: 'Profile'
+            },
+            my: {
+                welcome: 'BeatMM Pro သို့ကြိုဆိုပါသည်',
+                subtitle: 'မြန်မာ့အရေပြေဆုံး DJ ဂီတအသိုင်းအဝိုင်း - ပရို',
+                phone: '📱 ဖုန်းနံပါတ်',
+                password: '🔒 စကားဝှက်',
+                phone_placeholder: 'မြန်မာဖုန်းနံပါတ်ထည့်ပါ',
+                password_placeholder: 'စကားဝှက်ထည့်ပါ',
+                login: 'ယခုပင်ဝင်ရောက်ပါ',
+                no_account: 'အကောင့်မရှိဘူးလား?',
+                register: 'ယခုပင်စာရင်းသွင်းပါ',
+                now_playing: 'လက်ရှိဖွင့်နေသော',
+                hot_music: 'လူကြိုက်များသောဂီတ',
+                home: 'ပင်မ',
+                search: 'ရှာဖွေ',
+                music: 'ဂီတ',
+                favorites: 'အကြိုက်ဆုံး',
+                profile: 'ကျွန်ုပ်'
+            }
+        };
+
+        // API调用函数
+        async function apiCall(endpoint, options = {}) {
+            const url = `${API_BASE_URL}${endpoint}`;
+            const defaultOptions = {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            };
+
+            if (accessToken) {
+                defaultOptions.headers['Authorization'] = `Bearer ${accessToken}`;
+            }
+
+            const finalOptions = {
+                ...defaultOptions,
+                ...options,
+                headers: {
+                    ...defaultOptions.headers,
+                    ...options.headers,
+                },
+            };
+
+            try {
+                const response = await fetch(url, finalOptions);
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'API请求失败');
+                }
+
+                return data;
+            } catch (error) {
+                console.error('API调用错误:', error);
+                throw error;
+            }
+        }
+
+        // 显示错误消息
+        function showError(message) {
+            const errorElement = document.getElementById('errorMessage');
+            errorElement.textContent = message;
+            errorElement.style.display = 'block';
+            setTimeout(() => {
+                errorElement.style.display = 'none';
+            }, 5000);
+        }
+
+        // 显示成功消息
+        function showSuccess(message) {
+            const successElement = document.getElementById('successMessage');
+            successElement.textContent = message;
+            successElement.style.display = 'block';
+            setTimeout(() => {
+                successElement.style.display = 'none';
+            }, 3000);
+        }
+
+        // 设置语言
+        function setLanguage(lang) {
+            currentLanguage = lang;
+            
+            // 更新语言按钮状态
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // 更新页面文本
+            document.querySelectorAll('[data-i18n]').forEach(element => {
+                const key = element.getAttribute('data-i18n');
+                if (translations[lang] && translations[lang][key]) {
+                    element.textContent = translations[lang][key];
+                }
+            });
+
+            // 更新占位符文本
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(element => {
+                const key = element.getAttribute('data-i18n-placeholder');
+                if (translations[lang] && translations[lang][key]) {
+                    element.placeholder = translations[lang][key];
+                }
+            });
+        }
+
+        // 登录处理
+        async function handleLogin(event) {
+            event.preventDefault();
+            
+            const phone = document.getElementById('phone').value.trim();
+            const password = document.getElementById('password').value;
+            const loginBtn = document.getElementById('loginBtn');
+
+            if (!phone || !password) {
+                showError('请填写完整的登录信息');
+                return;
+            }
+
+            // 显示加载状态
+            loginBtn.disabled = true;
+            loginBtn.innerHTML = '<div class="loading"></div>';
+
+            try {
+                const response = await apiCall('/auth/login', {
+                    method: 'POST',
+                    body: JSON.stringify({ phone, password }),
+                });
+
+                // 保存用户信息和令牌
+                currentUser = response.user;
+                accessToken = response.access_token;
+                
+                // 保存到本地存储
+                localStorage.setItem('accessToken', accessToken);
+                localStorage.setItem('refreshToken', response.refresh_token);
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
+
+                showSuccess('登录成功！');
+                
+                // 切换到主应用界面
+                setTimeout(() => {
+                    showMainApp();
+                }, 1000);
+
+            } catch (error) {
+                showError(error.message || '登录失败，请检查手机号码和密码');
+            } finally {
+                // 恢复按钮状态
+                loginBtn.disabled = false;
+                loginBtn.innerHTML = '<span data-i18n="login">立即登录</span>';
+            }
+        }
+
+        // 显示主应用界面
+        function showMainApp() {
+            document.getElementById('loginContainer').style.display = 'none';
+            document.getElementById('appContainer').style.display = 'block';
+            
+            // 更新用户信息显示
+            updateUserInfo();
+            
+            // 加载音乐数据
+            loadMusicData();
+        }
+
+        // 更新用户信息显示
+        function updateUserInfo() {
+            if (currentUser) {
+                document.getElementById('walletBalance').textContent = `${currentUser.wallet_balance.toLocaleString()} MMK`;
+                document.getElementById('userAvatar').textContent = currentUser.first_name ? currentUser.first_name.charAt(0).toUpperCase() : currentUser.phone.charAt(-1);
+            }
+        }
+
+        // 加载音乐数据
+        async function loadMusicData() {
+            try {
+                const response = await apiCall('/music');
+                const musicList = response.music;
+                
+                // 渲染音乐网格
+                renderMusicGrid(musicList);
+                
+                // 设置当前播放（使用第一首歌）
+                if (musicList.length > 0) {
+                    renderCurrentPlaying(musicList[0]);
+                }
+                
+            } catch (error) {
+                console.error('加载音乐数据失败:', error);
+                showError('加载音乐数据失败');
+            }
+        }
+
+        // 渲染音乐网格
+        function renderMusicGrid(musicList) {
+            const musicGrid = document.getElementById('musicGrid');
+            musicGrid.innerHTML = '';
+
+            musicList.forEach((music, index) => {
+                const musicCard = document.createElement('div');
+                musicCard.className = 'music-card led-glass-frame';
+                musicCard.onclick = () => playMusic(music);
+                
+                const colors = ['var(--accent-purple)', 'var(--accent-blue)', 'var(--accent-pink)', 'var(--accent-green)', 'var(--accent-orange)'];
+                const color = colors[index % colors.length];
+                musicCard.style.borderColor = color;
+
+                musicCard.innerHTML = `
+                    <div class="music-info">
+                        <h3>${music.title}</h3>
+                        <p>${music.artist}</p>
+                        <div class="music-stats">
+                            <span><i class="fas fa-play"></i> ${music.play_count.toLocaleString()} 播放</span>
+                            <span><i class="fas fa-heart"></i> ${music.like_count} 喜欢</span>
+                        </div>
+                    </div>
+                `;
+
+                musicGrid.appendChild(musicCard);
+            });
+        }
+
+        // 渲染当前播放
+        function renderCurrentPlaying(music) {
+            const currentPlayingContent = document.getElementById('currentPlayingContent');
+            const duration = formatDuration(music.duration);
+            
+            currentPlayingContent.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 20px;">
+                    <div style="width: 80px; height: 80px; background: var(--accent-blue); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 2rem;">
+                        <i class="fas fa-music"></i>
+                    </div>
+                    <div style="flex: 1;">
+                        <h3 style="margin-bottom: 5px;">${music.title}</h3>
+                        <p style="color: var(--text-secondary); margin-bottom: 10px;">${music.artist}</p>
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                            <span style="font-size: 0.9rem;">1:23</span>
+                            <div style="flex: 1; height: 4px; background: rgba(255,255,255,0.2); border-radius: 2px; position: relative;">
+                                <div style="width: 30%; height: 100%; background: var(--accent-blue); border-radius: 2px;"></div>
+                            </div>
+                            <span style="font-size: 0.9rem;">${duration}</span>
+                        </div>
+                        <div style="display: flex; gap: 10px; align-items: center;">
+                            <button class="icon-btn" style="background: var(--accent-green);"><i class="fas fa-random"></i></button>
+                            <button class="icon-btn" style="background: var(--accent-blue);"><i class="fas fa-step-backward"></i></button>
+                            <button class="icon-btn" style="background: var(--accent-purple); width: 50px; height: 50px;"><i class="fas fa-pause"></i></button>
+                            <button class="icon-btn" style="background: var(--accent-orange);"><i class="fas fa-step-forward"></i></button>
+                            <button class="icon-btn" style="background: var(--accent-pink);"><i class="fas fa-redo"></i></button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // 播放音乐
+        async function playMusic(music) {
+            try {
+                // 记录播放
+                await apiCall(`/music/${music.id}/play`, {
+                    method: 'POST',
+                    body: JSON.stringify({ play_duration: 30 }), // 示例播放时长
+                });
+
+                // 更新当前播放显示
+                renderCurrentPlaying(music);
+                
+                showSuccess(`正在播放: ${music.title}`);
+                
+            } catch (error) {
+                console.error('播放音乐失败:', error);
+                showError('播放音乐失败');
+            }
+        }
+
+        // 格式化时长
+        function formatDuration(seconds) {
+            const minutes = Math.floor(seconds / 60);
+            const remainingSeconds = seconds % 60;
+            return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+        }
+
+        // 登出
+        function logout() {
+            // 清除本地存储
+            localStorage.removeItem('accessToken');
+            localStorage.removeItem('refreshToken');
+            localStorage.removeItem('currentUser');
+            
+            // 重置全局状态
+            currentUser = null;
+            accessToken = null;
+            
+            // 返回登录界面
+            document.getElementById('appContainer').style.display = 'none';
+            document.getElementById('loginContainer').style.display = 'flex';
+            
+            // 清空表单
+            document.getElementById('loginForm').reset();
+            
+            showSuccess('已成功登出');
+        }
+
+        // 显示设置（占位符）
+        function showSettings() {
+            alert('设置功能即将推出！');
+        }
+
+        // 显示注册（占位符）
+        function showRegister() {
+            alert('注册功能即将推出！');
+        }
+
+        // 页面加载完成后的初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 绑定登录表单事件
+            document.getElementById('loginForm').addEventListener('submit', handleLogin);
+            
+            // 检查是否有保存的登录状态
+            const savedToken = localStorage.getItem('accessToken');
+            const savedUser = localStorage.getItem('currentUser');
+            
+            if (savedToken && savedUser) {
+                accessToken = savedToken;
+                currentUser = JSON.parse(savedUser);
+                showMainApp();
+            }
+            
+            // 设置默认语言
+            setLanguage('zh');
+        });
+    </script>
+</body>
+</html>
+

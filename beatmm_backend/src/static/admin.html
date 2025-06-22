@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BeatMM Pro - 超级管理员控制台</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+
+        /* 隐藏入口提示 */
+        .hidden-access-hint {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 12px;
+            opacity: 0.3;
+            transition: opacity 0.3s ease;
+            z-index: 1000;
+        }
+
+        .hidden-access-hint:hover {
+            opacity: 1;
+        }
+
+        /* 超级管理员登录界面 */
+        .super-admin-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .super-admin-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 2px solid;
+            border-image: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #feca57) 1;
+            border-radius: 20px;
+            padding: 40px;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            animation: glow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from {
+                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), 0 0 20px rgba(255, 107, 107, 0.3);
+            }
+            to {
+                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), 0 0 30px rgba(78, 205, 196, 0.4);
+            }
+        }
+
+        .super-admin-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .super-admin-title {
+            font-size: 28px;
+            font-weight: bold;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+
+        .super-admin-subtitle {
+            color: #a0a0a0;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #e0e0e0;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid transparent;
+            border-radius: 12px;
+            color: #ffffff;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #4ecdc4;
+            box-shadow: 0 0 20px rgba(78, 205, 196, 0.3);
+        }
+
+        .form-input::placeholder {
+            color: #a0a0a0;
+        }
+
+        .super-admin-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            border: none;
+            border-radius: 12px;
+            color: #ffffff;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .super-admin-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(255, 107, 107, 0.3);
+        }
+
+        .super-admin-btn:active {
+            transform: translateY(0);
+        }
+
+        /* 管理员控制台界面 */
+        .admin-console {
+            display: none;
+            min-height: 100vh;
+        }
+
+        .admin-header {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .admin-logo {
+            font-size: 24px;
+            font-weight: bold;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .admin-user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .admin-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .admin-content {
+            display: flex;
+            min-height: calc(100vh - 80px);
+        }
+
+        .admin-sidebar {
+            width: 280px;
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 20px;
+        }
+
+        .admin-nav {
+            list-style: none;
+        }
+
+        .admin-nav-item {
+            margin-bottom: 10px;
+        }
+
+        .admin-nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            color: #e0e0e0;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .admin-nav-link:hover,
+        .admin-nav-link.active {
+            background: rgba(78, 205, 196, 0.2);
+            color: #4ecdc4;
+        }
+
+        .admin-main {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+        }
+
+        .admin-section {
+            display: none;
+        }
+
+        .admin-section.active {
+            display: block;
+        }
+
+        .section-title {
+            font-size: 28px;
+            margin-bottom: 20px;
+            color: #ffffff;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: bold;
+            color: #4ecdc4;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: #a0a0a0;
+            font-size: 14px;
+        }
+
+        .action-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .action-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 25px;
+        }
+
+        .action-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #ffffff;
+        }
+
+        .action-description {
+            color: #a0a0a0;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .action-btn {
+            padding: 10px 20px;
+            background: linear-gradient(45deg, #45b7d1, #96ceb4);
+            border: none;
+            border-radius: 8px;
+            color: #ffffff;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(69, 183, 209, 0.3);
+        }
+
+        .danger-btn {
+            background: linear-gradient(45deg, #ff6b6b, #ff8e8e);
+        }
+
+        .danger-btn:hover {
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.3);
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .admin-content {
+                flex-direction: column;
+            }
+
+            .admin-sidebar {
+                width: 100%;
+                border-right: none;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            }
+
+            .stats-grid,
+            .action-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* 加载动画 */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #4ecdc4;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* 通知样式 */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(78, 205, 196, 0.9);
+            color: #ffffff;
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.error {
+            background: rgba(255, 107, 107, 0.9);
+        }
+    </style>
+</head>
+<body>
+    <!-- 隐藏入口提示 -->
+    <div class="hidden-access-hint">
+        按 Ctrl+Shift+A 进入超级管理员模式
+    </div>
+
+    <!-- 超级管理员登录界面 -->
+    <div id="superAdminLogin" class="super-admin-container">
+        <div class="super-admin-card">
+            <div class="super-admin-header">
+                <h1 class="super-admin-title">🔐 超级管理员</h1>
+                <p class="super-admin-subtitle">BeatMM Pro 系统控制台</p>
+            </div>
+
+            <form id="superAdminForm">
+                <div class="form-group">
+                    <label class="form-label">🔑 密钥验证</label>
+                    <input type="password" id="secretKey" class="form-input" placeholder="输入超级管理员密钥" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">📱 手机号码</label>
+                    <input type="tel" id="adminPhone" class="form-input" placeholder="输入管理员手机号码" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">🔒 密码</label>
+                    <input type="password" id="adminPassword" class="form-input" placeholder="输入管理员密码" required>
+                </div>
+
+                <button type="submit" class="super-admin-btn">
+                    <span id="loginBtnText">进入控制台</span>
+                    <span id="loginLoading" class="loading" style="display: none;"></span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- 管理员控制台界面 -->
+    <div id="adminConsole" class="admin-console">
+        <!-- 顶部导航 -->
+        <header class="admin-header">
+            <div class="admin-logo">🎵 BeatMM Pro 超级控制台</div>
+            <div class="admin-user-info">
+                <div class="admin-avatar" id="adminAvatar">S</div>
+                <span id="adminName">超级管理员</span>
+                <button onclick="logout()" style="background: #ff6b6b; border: none; color: white; padding: 8px 16px; border-radius: 6px; cursor: pointer;">退出</button>
+            </div>
+        </header>
+
+        <!-- 主要内容 -->
+        <div class="admin-content">
+            <!-- 侧边栏 -->
+            <nav class="admin-sidebar">
+                <ul class="admin-nav">
+                    <li class="admin-nav-item">
+                        <a href="#" class="admin-nav-link active" onclick="showSection('dashboard')">
+                            📊 仪表盘
+                        </a>
+                    </li>
+                    <li class="admin-nav-item">
+                        <a href="#" class="admin-nav-link" onclick="showSection('users')">
+                            👥 用户管理
+                        </a>
+                    </li>
+                    <li class="admin-nav-item">
+                        <a href="#" class="admin-nav-link" onclick="showSection('notifications')">
+                            📢 通知管理
+                        </a>
+                    </li>
+                    <li class="admin-nav-item">
+                        <a href="#" class="admin-nav-link" onclick="showSection('accounting')">
+                            💰 算账机器人
+                        </a>
+                    </li>
+                    <li class="admin-nav-item">
+                        <a href="#" class="admin-nav-link" onclick="showSection('maintenance')">
+                            🔧 维护机器人
+                        </a>
+                    </li>
+                    <li class="admin-nav-item">
+                        <a href="#" class="admin-nav-link" onclick="showSection('system')">
+                            ⚙️ 系统设置
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+
+            <!-- 主要区域 -->
+            <main class="admin-main">
+                <!-- 仪表盘 -->
+                <section id="dashboard" class="admin-section active">
+                    <h2 class="section-title">📊 系统仪表盘</h2>
+                    
+                    <div class="stats-grid" id="statsGrid">
+                        <!-- 统计卡片将通过JavaScript动态加载 -->
+                    </div>
+
+                    <div class="action-grid">
+                        <div class="action-card">
+                            <h3 class="action-title">🚀 快速操作</h3>
+                            <p class="action-description">执行常用的管理操作</p>
+                            <button class="action-btn" onclick="refreshStats()">刷新统计</button>
+                        </div>
+
+                        <div class="action-card">
+                            <h3 class="action-title">🔍 系统检查</h3>
+                            <p class="action-description">检查系统健康状态</p>
+                            <button class="action-btn" onclick="systemHealthCheck()">健康检查</button>
+                        </div>
+
+                        <div class="action-card">
+                            <h3 class="action-title">🧹 系统清理</h3>
+                            <p class="action-description">清理过期数据和缓存</p>
+                            <button class="action-btn" onclick="systemCleanup()">执行清理</button>
+                        </div>
+
+                        <div class="action-card">
+                            <h3 class="action-title">⚡ 系统优化</h3>
+                            <p class="action-description">优化数据库和性能</p>
+                            <button class="action-btn" onclick="systemOptimize()">执行优化</button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 用户管理 -->
+                <section id="users" class="admin-section">
+                    <h2 class="section-title">👥 用户管理</h2>
+                    <div id="usersContent">
+                        <!-- 用户管理内容将通过JavaScript动态加载 -->
+                    </div>
+                </section>
+
+                <!-- 通知管理 -->
+                <section id="notifications" class="admin-section">
+                    <h2 class="section-title">📢 通知管理</h2>
+                    <div id="notificationsContent">
+                        <!-- 通知管理内容将通过JavaScript动态加载 -->
+                    </div>
+                </section>
+
+                <!-- 算账机器人 -->
+                <section id="accounting" class="admin-section">
+                    <h2 class="section-title">💰 算账机器人</h2>
+                    <div id="accountingContent">
+                        <!-- 算账机器人内容将通过JavaScript动态加载 -->
+                    </div>
+                </section>
+
+                <!-- 维护机器人 -->
+                <section id="maintenance" class="admin-section">
+                    <h2 class="section-title">🔧 维护机器人</h2>
+                    <div id="maintenanceContent">
+                        <!-- 维护机器人内容将通过JavaScript动态加载 -->
+                    </div>
+                </section>
+
+                <!-- 系统设置 -->
+                <section id="system" class="admin-section">
+                    <h2 class="section-title">⚙️ 系统设置</h2>
+                    <div id="systemContent">
+                        <!-- 系统设置内容将通过JavaScript动态加载 -->
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        // 全局变量
+        let adminToken = null;
+        let currentUser = null;
+        const API_BASE = 'http://localhost:5001/api';
+
+        // 隐藏入口检测
+        let keySequence = [];
+        document.addEventListener('keydown', function(e) {
+            keySequence.push(e.key);
+            if (keySequence.length > 10) {
+                keySequence.shift();
+            }
+
+            // 检测 Ctrl+Shift+A 组合键
+            if (e.ctrlKey && e.shiftKey && e.key === 'A') {
+                e.preventDefault();
+                showSuperAdminLogin();
+            }
+        });
+
+        // 显示超级管理员登录界面
+        function showSuperAdminLogin() {
+            document.getElementById('superAdminLogin').style.display = 'flex';
+            document.getElementById('adminConsole').style.display = 'none';
+        }
+
+        // 超级管理员登录
+        document.getElementById('superAdminForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const secretKey = document.getElementById('secretKey').value;
+            const phone = document.getElementById('adminPhone').value;
+            const password = document.getElementById('adminPassword').value;
+
+            // 显示加载状态
+            document.getElementById('loginBtnText').style.display = 'none';
+            document.getElementById('loginLoading').style.display = 'inline-block';
+
+            try {
+                // 首先验证密钥并注册超级管理员（如果不存在）
+                let response = await fetch(`${API_BASE}/auth/super-admin-register`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        secret_key: secretKey,
+                        phone: phone,
+                        password: password,
+                        email: 'admin@beatmm.pro',
+                        first_name: 'Super',
+                        last_name: 'Admin'
+                    })
+                });
+
+                if (!response.ok) {
+                    // 如果注册失败，尝试登录
+                    response = await fetch(`${API_BASE}/auth/login`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            phone: phone,
+                            password: password
+                        })
+                    });
+                }
+
+                const data = await response.json();
+
+                if (response.ok && data.user && data.user.role === 'super_admin') {
+                    adminToken = data.access_token;
+                    currentUser = data.user;
+                    
+                    // 进入管理控制台
+                    document.getElementById('superAdminLogin').style.display = 'none';
+                    document.getElementById('adminConsole').style.display = 'block';
+                    
+                    // 更新用户信息显示
+                    document.getElementById('adminName').textContent = `${currentUser.first_name} ${currentUser.last_name}`;
+                    document.getElementById('adminAvatar').textContent = currentUser.first_name.charAt(0);
+                    
+                    // 加载仪表盘数据
+                    loadDashboard();
+                    
+                    showNotification('登录成功！欢迎使用超级管理员控制台', 'success');
+                } else {
+                    throw new Error(data.error || '登录失败');
+                }
+            } catch (error) {
+                showNotification(error.message, 'error');
+            } finally {
+                // 恢复按钮状态
+                document.getElementById('loginBtnText').style.display = 'inline';
+                document.getElementById('loginLoading').style.display = 'none';
+            }
+        });
+
+        // 显示通知
+        function showNotification(message, type = 'success') {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.classList.add('show');
+            }, 100);
+
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+
+        // 切换管理界面部分
+        function showSection(sectionId) {
+            // 隐藏所有部分
+            document.querySelectorAll('.admin-section').forEach(section => {
+                section.classList.remove('active');
+            });
+
+            // 移除所有导航链接的活动状态
+            document.querySelectorAll('.admin-nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+
+            // 显示选中的部分
+            document.getElementById(sectionId).classList.add('active');
+
+            // 激活对应的导航链接
+            event.target.classList.add('active');
+
+            // 根据部分加载相应内容
+            switch(sectionId) {
+                case 'dashboard':
+                    loadDashboard();
+                    break;
+                case 'users':
+                    loadUsers();
+                    break;
+                case 'notifications':
+                    loadNotifications();
+                    break;
+                case 'accounting':
+                    loadAccounting();
+                    break;
+                case 'maintenance':
+                    loadMaintenance();
+                    break;
+                case 'system':
+                    loadSystem();
+                    break;
+            }
+        }
+
+        // 加载仪表盘
+        async function loadDashboard() {
+            try {
+                const response = await fetch(`${API_BASE}/admin/statistics`, {
+                    headers: {
+                        'Authorization': `Bearer ${adminToken}`
+                    }
+                });
+
+                if (response.ok) {
+                    const stats = await response.json();
+                    displayStats(stats);
+                }
+            } catch (error) {
+                console.error('加载统计数据失败:', error);
+            }
+        }
+
+        // 显示统计数据
+        function displayStats(stats) {
+            const statsGrid = document.getElementById('statsGrid');
+            statsGrid.innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-value">${stats.users?.total || 0}</div>
+                    <div class="stat-label">总用户数</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${stats.users?.active || 0}</div>
+                    <div class="stat-label">活跃用户</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${stats.music?.total_songs || 0}</div>
+                    <div class="stat-label">音乐总数</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${stats.wallet?.total_balance?.toFixed(0) || 0} MMK</div>
+                    <div class="stat-label">总钱包余额</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${stats.music?.total_plays || 0}</div>
+                    <div class="stat-label">总播放次数</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${stats.notifications?.active || 0}</div>
+                    <div class="stat-label">活跃通知</div>
+                </div>
+            `;
+        }
+
+        // 刷新统计数据
+        function refreshStats() {
+            loadDashboard();
+            showNotification('统计数据已刷新');
+        }
+
+        // 系统健康检查
+        async function systemHealthCheck() {
+            try {
+                const response = await fetch(`${API_BASE}/bot/maintenance/health-check`, {
+                    headers: {
+                        'Authorization': `Bearer ${adminToken}`
+                    }
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    showNotification(`系统健康检查完成 - 状态: ${result.overall_status}`);
+                } else {
+                    throw new Error('健康检查失败');
+                }
+            } catch (error) {
+                showNotification(error.message, 'error');
+            }
+        }
+
+        // 系统清理
+        async function systemCleanup() {
+            try {
+                const response = await fetch(`${API_BASE}/bot/maintenance/cleanup`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${adminToken}`
+                    }
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    showNotification('系统清理完成');
+                } else {
+                    throw new Error('系统清理失败');
+                }
+            } catch (error) {
+                showNotification(error.message, 'error');
+            }
+        }
+
+        // 系统优化
+        async function systemOptimize() {
+            try {
+                const response = await fetch(`${API_BASE}/bot/maintenance/optimize`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${adminToken}`
+                    }
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    showNotification('系统优化完成');
+                } else {
+                    throw new Error('系统优化失败');
+                }
+            } catch (error) {
+                showNotification(error.message, 'error');
+            }
+        }
+
+        // 加载用户管理
+        function loadUsers() {
+            document.getElementById('usersContent').innerHTML = `
+                <div class="action-grid">
+                    <div class="action-card">
+                        <h3 class="action-title">👥 用户列表</h3>
+                        <p class="action-description">查看和管理所有用户</p>
+                        <button class="action-btn" onclick="viewAllUsers()">查看用户</button>
+                    </div>
+                    <div class="action-card">
+                        <h3 class="action-title">⬆️ 用户升级</h3>
+                        <p class="action-description">将普通用户升级为管理员</p>
+                        <button class="action-btn" onclick="upgradeUser()">升级用户</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // 加载通知管理
+        function loadNotifications() {
+            document.getElementById('notificationsContent').innerHTML = `
+                <div class="action-grid">
+                    <div class="action-card">
+                        <h3 class="action-title">📢 发布通知</h3>
+                        <p class="action-description">向用户发布系统通知</p>
+                        <button class="action-btn" onclick="createNotification()">发布通知</button>
+                    </div>
+                    <div class="action-card">
+                        <h3 class="action-title">📋 通知列表</h3>
+                        <p class="action-description">查看和管理所有通知</p>
+                        <button class="action-btn" onclick="viewNotifications()">查看通知</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // 加载算账机器人
+        function loadAccounting() {
+            document.getElementById('accountingContent').innerHTML = `
+                <div class="action-grid">
+                    <div class="action-card">
+                        <h3 class="action-title">💰 财务报告</h3>
+                        <p class="action-description">生成详细的财务分析报告</p>
+                        <button class="action-btn" onclick="generateFinancialReport()">生成报告</button>
+                    </div>
+                    <div class="action-card">
+                        <h3 class="action-title">📊 用户统计</h3>
+                        <p class="action-description">分析用户消费和活跃度</p>
+                        <button class="action-btn" onclick="getUserStatistics()">用户统计</button>
+                    </div>
+                    <div class="action-card">
+                        <h3 class="action-title">🔍 自动对账</h3>
+                        <p class="action-description">检查账户余额一致性</p>
+                        <button class="action-btn" onclick="reconcileAccounts()">执行对账</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // 加载维护机器人
+        function loadMaintenance() {
+            document.getElementById('maintenanceContent').innerHTML = `
+                <div class="action-grid">
+                    <div class="action-card">
+                        <h3 class="action-title">🔍 健康检查</h3>
+                        <p class="action-description">全面检查系统健康状态</p>
+                        <button class="action-btn" onclick="systemHealthCheck()">健康检查</button>
+                    </div>
+                    <div class="action-card">
+                        <h3 class="action-title">🧹 数据清理</h3>
+                        <p class="action-description">清理过期和无用数据</p>
+                        <button class="action-btn" onclick="systemCleanup()">执行清理</button>
+                    </div>
+                    <div class="action-card">
+                        <h3 class="action-title">⚡ 性能优化</h3>
+                        <p class="action-description">优化数据库和系统性能</p>
+                        <button class="action-btn" onclick="systemOptimize()">执行优化</button>
+                    </div>
+                    <div class="action-card">
+                        <h3 class="action-title">📈 性能报告</h3>
+                        <p class="action-description">生成系统性能分析报告</p>
+                        <button class="action-btn" onclick="getPerformanceReport()">性能报告</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // 加载系统设置
+        function loadSystem() {
+            document.getElementById('systemContent').innerHTML = `
+                <div class="action-grid">
+                    <div class="action-card">
+                        <h3 class="action-title">🤖 机器人状态</h3>
+                        <p class="action-description">查看算账和维护机器人状态</p>
+                        <button class="action-btn" onclick="getBotStatus()">机器人状态</button>
+                    </div>
+                    <div class="action-card">
+                        <h3 class="action-title">📋 系统日志</h3>
+                        <p class="action-description">查看系统操作日志</p>
+                        <button class="action-btn" onclick="viewSystemLogs()">查看日志</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // 退出登录
+        function logout() {
+            adminToken = null;
+            currentUser = null;
+            document.getElementById('superAdminLogin').style.display = 'flex';
+            document.getElementById('adminConsole').style.display = 'none';
+            
+            // 清空表单
+            document.getElementById('superAdminForm').reset();
+            
+            showNotification('已安全退出');
+        }
+
+        // 占位函数 - 实际项目中需要实现
+        function viewAllUsers() { showNotification('用户列表功能开发中...'); }
+        function upgradeUser() { showNotification('用户升级功能开发中...'); }
+        function createNotification() { showNotification('发布通知功能开发中...'); }
+        function viewNotifications() { showNotification('通知列表功能开发中...'); }
+        function generateFinancialReport() { showNotification('财务报告功能开发中...'); }
+        function getUserStatistics() { showNotification('用户统计功能开发中...'); }
+        function reconcileAccounts() { showNotification('自动对账功能开发中...'); }
+        function getPerformanceReport() { showNotification('性能报告功能开发中...'); }
+        function getBotStatus() { showNotification('机器人状态功能开发中...'); }
+        function viewSystemLogs() { showNotification('系统日志功能开发中...'); }
+
+        // 页面加载完成后的初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 检查是否有保存的登录状态
+            const savedToken = localStorage.getItem('adminToken');
+            if (savedToken) {
+                adminToken = savedToken;
+                // 可以在这里验证token是否仍然有效
+            }
+        });
+    </script>
+</body>
+</html>
+
