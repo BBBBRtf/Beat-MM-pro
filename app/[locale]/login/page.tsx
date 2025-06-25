@@ -1,9 +1,13 @@
 'use client';
 
+'use client'; // Ensure this is at the top
+
 import React, { useState, useEffect } from 'react';
-import Link from 'next/link';
+import Link from 'next/link'; // For internal navigation, keep as is
+import { useRouter, useParams } from 'next/navigation'; // For changing locale path
 import { Container, Form, Button } from 'react-bootstrap';
 import { motion } from 'framer-motion';
+import { useTranslation } from '../../i18n/client'; // Adjusted path
 
 const SUPER_ADMIN_PHONES = ['09787715620', '09424425049'];
 
@@ -35,6 +39,11 @@ const itemVariants = {
 };
 
 const LoginPage: React.FC = () => {
+  const params = useParams();
+  const locale = params.locale as string;
+  const { t, i18n } = useTranslation('login'); // Specify 'login' namespace
+  const router = useRouter();
+
   const [phoneNumber, setPhoneNumber] = useState('');
   const [password, setPassword] = useState('');
   const [isSuperAdmin, setIsSuperAdmin] = useState(false);
@@ -50,6 +59,14 @@ const LoginPage: React.FC = () => {
     // Actual Supabase login logic will be added later
   };
 
+  const changeLanguage = (lng: string) => {
+    // i18n.changeLanguage(lng); // This updates i18next instance
+    router.push(`/${lng}/login`); // Change URL to reflect new language
+  };
+
+  // Determine which title to use
+  const pageTitle = isSuperAdmin ? t('superAdminPageTitle') : t('pageTitle');
+
   return (
     <Container fluid className="min-h-screen bg-black flex items-center justify-center p-4 overflow-hidden">
       <motion.div
@@ -58,20 +75,27 @@ const LoginPage: React.FC = () => {
         initial="hidden"
         animate="visible"
       >
+        {/* Language Switcher */}
+        <motion.div className="text-center mb-6 space-x-2" variants={itemVariants}>
+          <Button variant={locale === 'en' ? 'light' : 'outline-light'} size="sm" onClick={() => changeLanguage('en')}>EN</Button>
+          <Button variant={locale === 'zh' ? 'light' : 'outline-light'} size="sm" onClick={() => changeLanguage('zh')}>中文</Button>
+          <Button variant={locale === 'my' ? 'light' : 'outline-light'} size="sm" onClick={() => changeLanguage('my')}>MY</Button>
+        </motion.div>
+
         <motion.h1
           className={`text-3xl font-bold text-center mb-8 ${isSuperAdmin ? 'text-yellow-400' : 'text-cyan-400'}`}
           variants={itemVariants}
         >
-          {isSuperAdmin ? 'Super Admin Login' : 'BeatMM Pro Login'}
+          {pageTitle}
         </motion.h1>
 
         <Form onSubmit={handleLogin}>
           <motion.div variants={itemVariants}>
             <Form.Group className="mb-6" controlId="formPhoneNumber">
-              <Form.Label className="text-gray-400 mb-2 block text-sm font-medium">Phone Number</Form.Label>
+              <Form.Label className="text-gray-400 mb-2 block text-sm font-medium">{t('phoneNumberLabel')}</Form.Label>
               <Form.Control
                 type="tel"
-                placeholder="Enter your phone number"
+                placeholder={t('phoneNumberLabel')}
                 value={phoneNumber}
                 onChange={(e) => setPhoneNumber(e.target.value)}
                 className="bg-gray-800 border-0 border-b-2 border-gray-600 text-gray-200 text-sm focus:ring-0 focus:border-cyan-500 block w-full p-3 placeholder-gray-500 transition-colors duration-300"
@@ -82,10 +106,10 @@ const LoginPage: React.FC = () => {
 
           <motion.div variants={itemVariants}>
             <Form.Group className="mb-6" controlId="formPassword">
-              <Form.Label className="text-gray-400 mb-2 block text-sm font-medium">Password</Form.Label>
+              <Form.Label className="text-gray-400 mb-2 block text-sm font-medium">{t('passwordLabel')}</Form.Label>
               <Form.Control
                 type="password"
-                placeholder="••••••••"
+                placeholder={t('passwordLabel')}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="bg-gray-800 border-0 border-b-2 border-gray-600 text-gray-200 text-sm focus:ring-0 focus:border-cyan-500 block w-full p-3 placeholder-gray-500 transition-colors duration-300"
@@ -103,7 +127,7 @@ const LoginPage: React.FC = () => {
                   : 'bg-cyan-600 hover:bg-cyan-700 focus:ring-cyan-500'
                 }`}
             >
-              Login
+              {t('loginButton')}
             </Button>
           </motion.div>
         </Form>
@@ -112,9 +136,10 @@ const LoginPage: React.FC = () => {
           className="text-sm text-gray-500 mt-8 text-center"
           variants={itemVariants}
         >
-          Don&apos;t have an account?{' '}
+          {t('registerPrompt')}{' '}
+          {/* Using Link from next/link for client-side navigation to a potentially non-localized route for now */}
           <Link href="/register" className="font-medium text-cyan-400 hover:text-cyan-300">
-            Register Now
+            {t('registerLink')}
           </Link>
         </motion.p>
       </motion.div>
