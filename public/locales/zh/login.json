@@ -5,5 +5,12 @@
   "passwordLabel": "密码",
   "loginButton": "登录",
   "registerPrompt": "还没有账号？",
-  "registerLink": "立即注册"
+  "registerLink": "立即注册",
+  "register_pageTitle": "创建账户",
+  "register_usernameLabel": "用户名",
+  "register_confirmPasswordLabel": "确认密码",
+  "register_buttonText": "注册",
+  "loginLinkPrompt": "已有账户？",
+  "loginLinkActionText": "登录",
+  "register_passwordMismatch": "密码不匹配！"
 }

@@ -5,5 +5,12 @@
   "passwordLabel": "စကားဝှက်",
   "loginButton": "ဝင်မည်",
   "registerPrompt": "အကောင့်မရှိဘူးလား?",
-  "registerLink": "ယခုစာရင်းသွင်းပါ"
+  "registerLink": "ယခုစာရင်းသွင်းပါ",
+  "register_pageTitle": "အကောင့်အသစ် ဖန်တီးရန်",
+  "register_usernameLabel": "အသုံးပြုသူအမည်",
+  "register_confirmPasswordLabel": "စကားဝှက် အတည်ပြုပါ",
+  "register_buttonText": "စာရင်းသွင်းမည်",
+  "loginLinkPrompt": "အကောင့်ရှိပြီးသားလား?",
+  "loginLinkActionText": "ဝင်မည်",
+  "register_passwordMismatch": "စကားဝှက်များ မကိုက်ညီပါ။"
 }

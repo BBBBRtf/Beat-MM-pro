@@ -5,5 +5,12 @@
   "passwordLabel": "Password",
   "loginButton": "Login",
   "registerPrompt": "Don't have an account?",
-  "registerLink": "Register Now"
+  "registerLink": "Register Now",
+  "register_pageTitle": "Create Account",
+  "register_usernameLabel": "Username",
+  "register_confirmPasswordLabel": "Confirm Password",
+  "register_buttonText": "Register",
+  "loginLinkPrompt": "Already have an account?",
+  "loginLinkActionText": "Login",
+  "register_passwordMismatch": "Passwords do not match!"
 }
