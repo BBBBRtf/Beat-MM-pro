@@ -18,5 +18,11 @@
   "upload_pageTitle": "上传音乐/视频",
   "live_pageTitle": "直播",
   "login_welcomeTitle": "欢迎回到 BeatMM Pro",
-  "login_forgotPasswordLink": "忘记密码？"
+  "login_forgotPasswordLink": "忘记密码？",
+  "validation_allFieldsRequired": "所有字段均为必填项。",
+  "validation_passwordTooShort": "密码必须至少包含6个字符。",
+  "login_invalidCredentials": "无效的手机号码或密码。",
+  "registration_successful": "注册成功！请登录。",
+  "error_generic_supabase": "发生错误，请重试。",
+  "loading": "加载中..."
 }

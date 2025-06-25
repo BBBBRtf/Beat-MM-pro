@@ -18,5 +18,11 @@
   "upload_pageTitle": "Upload Music/Video",
   "live_pageTitle": "Live Streams",
   "login_welcomeTitle": "Welcome back to BeatMM Pro",
-  "login_forgotPasswordLink": "Forgot password?"
+  "login_forgotPasswordLink": "Forgot password?",
+  "validation_allFieldsRequired": "All fields are required.",
+  "validation_passwordTooShort": "Password must be at least 6 characters.",
+  "login_invalidCredentials": "Invalid phone number or password.",
+  "registration_successful": "Registration successful! Please log in.",
+  "error_generic_supabase": "An error occurred. Please try again.",
+  "loading": "Loading..."
 }

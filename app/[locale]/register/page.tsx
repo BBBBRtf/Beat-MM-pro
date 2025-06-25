@@ -1,14 +1,15 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter, useParams } from 'next/navigation';
-import { Container, Form, Button } from 'react-bootstrap';
+import { Container, Form, Button, Alert } from 'react-bootstrap';
 import { motion } from 'framer-motion';
-import { useTranslation } from '../../../i18n/client'; // Adjusted path
+import { useTranslation } from '../../../i18n/client';
+import { UserIcon, PhoneIcon, LockClosedIcon } from '@heroicons/react/24/outline';
+import { createSupabaseBrowserClient } from '../../../lib/supabase/client'; // Import Supabase client
 
-// Animation Variants (can be shared or defined per page)
-// For now, copying from login page for consistency
+// Animation Variants
 const containerVariants = {
   hidden: { opacity: 0, scale: 0.90 },
   visible: {
@@ -38,23 +39,67 @@ const itemVariants = {
 const RegisterPage: React.FC = () => {
   const params = useParams();
   const locale = params.locale as string;
-  const { t, i18n } = useTranslation('login'); // Using 'login' namespace as keys are added there
+  const { t, i18n } = useTranslation('login'); // Using 'login' namespace
   const router = useRouter();
 
   const [username, setUsername] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const supabase = createSupabaseBrowserClient();
 
-  const handleRegister = (e: React.FormEvent) => {
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Basic validation example (can be expanded)
-    if (password !== confirmPassword) {
-      alert(t('register_passwordMismatch')); // Assuming you add this key for error messages
+    setError(null);
+    setLoading(true);
+
+    if (!username || !phoneNumber || !password || !confirmPassword) {
+      setError(t('validation_allFieldsRequired'));
+      setLoading(false);
       return;
     }
-    console.log('Registering:', { username, phoneNumber, password });
-    // Actual API call will be added later
+    if (password.length < 6) {
+      setError(t('validation_passwordTooShort'));
+      setLoading(false);
+      return;
+    }
+    if (password !== confirmPassword) {
+      setError(t('register_passwordMismatch'));
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const { data, error: signUpError } = await supabase.auth.signUp({
+        phone: phoneNumber, // Ensure phone number is in a Supabase-accepted format (e.g., E.164)
+        password: password,
+        options: {
+          data: {
+            username: username,
+          },
+        },
+      });
+
+      if (signUpError) {
+        console.error('Supabase Sign Up Error:', signUpError);
+        setError(signUpError.message || t('error_generic_supabase'));
+      } else if (data.user) {
+        // data.user exists but might require phone confirmation depending on Supabase settings
+        // For now, assume direct success or that confirmation email/SMS is handled by Supabase
+        console.log('Registration successful for user:', data.user);
+        router.push(`/${locale}/login?message=${encodeURIComponent(t('registration_successful'))}`);
+      } else {
+        // Fallback if no user and no error, though unlikely with phone signup
+         setError(t('error_generic_supabase'));
+      }
+    } catch (catchError: any) {
+      console.error('Catch Error During Sign Up:', catchError);
+      setError(catchError.message || t('error_generic_supabase'));
+    } finally {
+      setLoading(false);
+    }
   };
 
   const changeLanguage = (lng: string) => {
@@ -62,98 +107,129 @@ const RegisterPage: React.FC = () => {
   };
 
   return (
-    <Container fluid className="min-h-screen bg-black flex items-center justify-center p-4 overflow-hidden">
+    <Container fluid className="min-h-screen bg-gray-900 flex items-center justify-center p-4 overflow-hidden">
       <motion.div
-        className="w-full max-w-md bg-gray-900 p-8 rounded-xl border border-gray-700 shadow-2xl shadow-cyan-500/20"
+        className="w-full max-w-md bg-beatmm-card rounded-lg shadow-lg p-8 space-y-6"
         variants={containerVariants}
         initial="hidden"
         animate="visible"
       >
         {/* Language Switcher */}
-        <motion.div className="text-center mb-6 space-x-2" variants={itemVariants}>
+        <motion.div className="text-center mb-4 space-x-2" variants={itemVariants}>
           <Button variant={locale === 'en' ? 'light' : 'outline-light'} size="sm" onClick={() => changeLanguage('en')}>EN</Button>
           <Button variant={locale === 'zh' ? 'light' : 'outline-light'} size="sm" onClick={() => changeLanguage('zh')}>中文</Button>
           <Button variant={locale === 'my' ? 'light' : 'outline-light'} size="sm" onClick={() => changeLanguage('my')}>MY</Button>
         </motion.div>
 
-        <motion.h1
-          className="text-3xl font-bold text-center mb-8 text-cyan-400"
-          variants={itemVariants}
-        >
+        {/* Logo Placeholder */}
+        <motion.div className="text-center" variants={itemVariants}>
+          <div className="text-3xl font-bold text-white">BeatMM Pro</div>
+        </motion.div>
+
+        {/* Page Title */}
+        <motion.h2 className="text-center text-white text-xl font-semibold" variants={itemVariants}>
           {t('register_pageTitle')}
-        </motion.h1>
+        </motion.h2>
 
-        <Form onSubmit={handleRegister}>
+        {error && (
           <motion.div variants={itemVariants}>
-            <Form.Group className="mb-6" controlId="formUsername">
-              <Form.Label className="text-gray-400 mb-2 block text-sm font-medium">{t('register_usernameLabel')}</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder={t('register_usernameLabel')}
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                className="bg-gray-800 border-0 border-b-2 border-gray-600 text-gray-200 text-sm focus:ring-0 focus:border-cyan-500 block w-full p-3 placeholder-gray-500 transition-colors duration-300"
-                required
-              />
+            <Alert variant="danger" onClose={() => setError(null)} dismissible className="text-sm">
+              {error}
+            </Alert>
+          </motion.div>
+        )}
+
+        <Form onSubmit={handleRegister} className="space-y-4">
+          {/* Username Input */}
+          <motion.div variants={itemVariants}>
+            <Form.Group controlId="formRegisterUsername">
+              <Form.Label className="sr-only">{t('register_usernameLabel')}</Form.Label>
+              <div className="flex items-center bg-gray-700 rounded px-3 py-2">
+                <UserIcon className="h-5 w-5 text-gray-400 mr-3" />
+                <Form.Control
+                  type="text"
+                  placeholder={t('register_usernameLabel')}
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  className="bg-transparent focus:outline-none text-white w-full border-0 p-0"
+                  required
+                  disabled={loading}
+                />
+              </div>
             </Form.Group>
           </motion.div>
 
+          {/* Phone Number Input */}
           <motion.div variants={itemVariants}>
-            <Form.Group className="mb-6" controlId="formPhoneNumberRegister">
-              <Form.Label className="text-gray-400 mb-2 block text-sm font-medium">{t('phoneNumberLabel')}</Form.Label>
-              <Form.Control
-                type="tel"
-                placeholder={t('phoneNumberLabel')}
-                value={phoneNumber}
-                onChange={(e) => setPhoneNumber(e.target.value)}
-                className="bg-gray-800 border-0 border-b-2 border-gray-600 text-gray-200 text-sm focus:ring-0 focus:border-cyan-500 block w-full p-3 placeholder-gray-500 transition-colors duration-300"
-                required
-              />
+            <Form.Group controlId="formRegisterPhoneNumber">
+              <Form.Label className="sr-only">{t('phoneNumberLabel')}</Form.Label>
+              <div className="flex items-center bg-gray-700 rounded px-3 py-2">
+                <PhoneIcon className="h-5 w-5 text-gray-400 mr-3" />
+                <Form.Control
+                  type="tel"
+                  placeholder={t('phoneNumberLabel')}
+                  value={phoneNumber}
+                  onChange={(e) => setPhoneNumber(e.target.value)}
+                  className="bg-transparent focus:outline-none text-white w-full border-0 p-0"
+                  required
+                  disabled={loading}
+                />
+              </div>
             </Form.Group>
           </motion.div>
 
+          {/* Password Input */}
           <motion.div variants={itemVariants}>
-            <Form.Group className="mb-6" controlId="formPasswordRegister">
-              <Form.Label className="text-gray-400 mb-2 block text-sm font-medium">{t('passwordLabel')}</Form.Label>
-              <Form.Control
-                type="password"
-                placeholder={t('passwordLabel')}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="bg-gray-800 border-0 border-b-2 border-gray-600 text-gray-200 text-sm focus:ring-0 focus:border-cyan-500 block w-full p-3 placeholder-gray-500 transition-colors duration-300"
-                required
-              />
+            <Form.Group controlId="formRegisterPassword">
+              <Form.Label className="sr-only">{t('passwordLabel')}</Form.Label>
+              <div className="flex items-center bg-gray-700 rounded px-3 py-2">
+                <LockClosedIcon className="h-5 w-5 text-gray-400 mr-3" />
+                <Form.Control
+                  type="password"
+                  placeholder={t('passwordLabel')}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="bg-transparent focus:outline-none text-white w-full border-0 p-0"
+                  required
+                  disabled={loading}
+                />
+              </div>
             </Form.Group>
           </motion.div>
 
+          {/* Confirm Password Input */}
           <motion.div variants={itemVariants}>
-            <Form.Group className="mb-6" controlId="formConfirmPassword">
-              <Form.Label className="text-gray-400 mb-2 block text-sm font-medium">{t('register_confirmPasswordLabel')}</Form.Label>
-              <Form.Control
-                type="password"
-                placeholder={t('register_confirmPasswordLabel')}
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                className="bg-gray-800 border-0 border-b-2 border-gray-600 text-gray-200 text-sm focus:ring-0 focus:border-cyan-500 block w-full p-3 placeholder-gray-500 transition-colors duration-300"
-                required
-              />
+            <Form.Group controlId="formRegisterConfirmPassword">
+              <Form.Label className="sr-only">{t('register_confirmPasswordLabel')}</Form.Label>
+              <div className="flex items-center bg-gray-700 rounded px-3 py-2">
+                <LockClosedIcon className="h-5 w-5 text-gray-400 mr-3" />
+                <Form.Control
+                  type="password"
+                  placeholder={t('register_confirmPasswordLabel')}
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  className="bg-transparent focus:outline-none text-white w-full border-0 p-0"
+                  required
+                  disabled={loading}
+                />
+              </div>
             </Form.Group>
           </motion.div>
 
+          {/* Register Button */}
           <motion.div variants={itemVariants}>
             <Button
               type="submit"
-              className="w-full font-semibold py-3 px-4 rounded-md text-white bg-cyan-600 hover:bg-cyan-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-black focus:ring-cyan-500 transition-all duration-300 ease-in-out"
+              className="w-full py-2.5 rounded-md bg-gradient-primary text-white font-semibold hover:opacity-90 transition-opacity duration-300"
+              disabled={loading}
             >
-              {t('register_buttonText')}
+              {loading ? t('loading', 'Loading...') : t('register_buttonText')}
             </Button>
           </motion.div>
         </Form>
 
-        <motion.p
-          className="text-sm text-gray-500 mt-8 text-center"
-          variants={itemVariants}
-        >
+        {/* Login Link Footer */}
+        <motion.p className="text-sm text-gray-400 mt-6 text-center" variants={itemVariants}>
           {t('loginLinkPrompt')}{' '}
           <Link href={`/${locale}/login`} className="font-medium text-cyan-400 hover:text-cyan-300">
             {t('loginLinkActionText')}

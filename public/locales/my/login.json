@@ -18,5 +18,11 @@
   "upload_pageTitle": "ဂီတ/ဗီဒီယိုတင်ရန်",
   "live_pageTitle": "တိုက်ရိုက်ထုတ်လွှင့်မှု",
   "login_welcomeTitle": "BeatMM Pro သို့ ပြန်လာရန် ကြိုဆိုပါတယ်",
-  "login_forgotPasswordLink": "လျှို့ဝှက်နံပါတ် မေ့ပါသလား?"
+  "login_forgotPasswordLink": "လျှို့ဝှက်နံပါတ် မေ့ပါသလား?",
+  "validation_allFieldsRequired": "အကွက်အားလုံးလိုအပ်ပါသည်။",
+  "validation_passwordTooShort": "စကားဝှက်သည် အနည်းဆုံး စာလုံး ၆ လုံးရှိရမည်။",
+  "login_invalidCredentials": "ဖုန်းနံပါတ် သို့မဟုတ် စကားဝှက် မှားယွင်းနေသည်။",
+  "registration_successful": "မှတ်ပုံတင်ခြင်းအောင်မြင်ပါပြီ! ကျေးဇူးပြု၍ လော့ဂ်အင်ဝင်ပါ။",
+  "error_generic_supabase": "အမှားအယွင်းတစ်ခု ဖြစ်ပွားခဲ့သည်။ ကျေးဇူးပြု၍ နောက်တစ်ကြိမ်ကြိုးစားပါ။",
+  "loading": "တင်နေသည်..."
 }
