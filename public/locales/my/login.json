@@ -12,5 +12,9 @@
   "register_buttonText": "စာရင်းသွင်းမည်",
   "loginLinkPrompt": "အကောင့်ရှိပြီးသားလား?",
   "loginLinkActionText": "ဝင်မည်",
-  "register_passwordMismatch": "စကားဝှက်များ မကိုက်ညီပါ။"
+  "register_passwordMismatch": "စကားဝှက်များ မကိုက်ညီပါ။",
+  "home_pageTitle": "BeatMM Pro မှ ကြိုဆိုပါတယ်",
+  "profile_pageTitle": "အသုံးပြုသူအချက်အလက်",
+  "upload_pageTitle": "ဂီတ/ဗီဒီယိုတင်ရန်",
+  "live_pageTitle": "တိုက်ရိုက်ထုတ်လွှင့်မှု"
 }

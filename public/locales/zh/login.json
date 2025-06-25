@@ -12,5 +12,9 @@
   "register_buttonText": "注册",
   "loginLinkPrompt": "已有账户？",
   "loginLinkActionText": "登录",
-  "register_passwordMismatch": "密码不匹配！"
+  "register_passwordMismatch": "密码不匹配！",
+  "home_pageTitle": "欢迎来到 BeatMM Pro",
+  "profile_pageTitle": "用户资料",
+  "upload_pageTitle": "上传音乐/视频",
+  "live_pageTitle": "直播"
 }

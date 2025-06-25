@@ -12,5 +12,9 @@
   "register_buttonText": "Register",
   "loginLinkPrompt": "Already have an account?",
   "loginLinkActionText": "Login",
-  "register_passwordMismatch": "Passwords do not match!"
+  "register_passwordMismatch": "Passwords do not match!",
+  "home_pageTitle": "Welcome to BeatMM Pro",
+  "profile_pageTitle": "User Profile",
+  "upload_pageTitle": "Upload Music/Video",
+  "live_pageTitle": "Live Streams"
 }
