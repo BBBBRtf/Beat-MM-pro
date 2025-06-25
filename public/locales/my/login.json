@@ -33,5 +33,10 @@
   "upload_audioFileLabel": "အသံဖိုင် (MP3, WAV, etc.)",
   "upload_buttonText": "သီချင်းတင်ပါ။",
   "validation_invalidPrice": "စျေးနှုန်းသည် မှန်ကန်သော အနုတ်မဟုတ်သော ကိန်းဂဏန်းဖြစ်ရမည်။",
-  "upload_successful_placeholder": "သီချင်းကို ပြန်လည်သုံးသပ်ရန် တင်သွင်းပြီးပါပြီ။"
+  "upload_successful_placeholder": "သီချင်းကို ပြန်လည်သုံးသပ်ရန် တင်သွင်းပြီးပါပြီ။",
+  "error_notAuthenticated": "သီချင်းများတင်ရန် လော့ဂ်အင်ဝင်ရပါမည်။",
+  "error_coverUploadFailed": "အဖုံးပုံတင်ခြင်း မအောင်မြင်ပါ။",
+  "error_audioUploadFailed": "အသံဖိုင်တင်ခြင်း မအောင်မြင်ပါ။",
+  "error_databaseInsertFailed": "သီချင်းအချက်အလက်များကို သိမ်းဆည်းရန် မအောင်မြင်ပါ။",
+  "upload_successful": "သင်၏သီချင်းကို အောင်မြင်စွာတင်ပြီးပါပြီ!"
 }

@@ -33,5 +33,10 @@
   "upload_audioFileLabel": "音频文件 (MP3, WAV等)",
   "upload_buttonText": "上传歌曲",
   "validation_invalidPrice": "价格必须是有效的非负数。",
-  "upload_successful_placeholder": "歌曲已提交审核！"
+  "upload_successful_placeholder": "歌曲已提交审核！",
+  "error_notAuthenticated": "您必须登录才能上传歌曲。",
+  "error_coverUploadFailed": "封面图片上传失败。",
+  "error_audioUploadFailed": "音频文件上传失败。",
+  "error_databaseInsertFailed": "无法保存歌曲详细信息。",
+  "upload_successful": "您的歌曲已成功上传！"
 }

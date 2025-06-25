@@ -1,11 +1,12 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import Link from 'next/link'; // Keep for potential future use, though not directly in form
+import Link from 'next/link';
 import { useRouter, useParams } from 'next/navigation';
 import { Container, Form, Button, Image, Alert } from 'react-bootstrap';
 import { motion } from 'framer-motion';
 import { useTranslation } from '../../../i18n/client';
+import { createSupabaseBrowserClient } from '../../../lib/supabase/client'; // Import Supabase client
 import {
   MusicalNoteIcon,
   UserCircleIcon,
@@ -45,8 +46,9 @@ const itemVariants = {
 const UploadPage: React.FC = () => {
   const params = useParams();
   const locale = params.locale as string;
-  const { t, i18n } = useTranslation('login'); // Using 'login' namespace
+  const { t, i18n } = useTranslation('login');
   const router = useRouter();
+  const supabase = createSupabaseBrowserClient();
 
   const [title, setTitle] = useState('');
   const [artistName, setArtistName] = useState('');
@@ -104,33 +106,90 @@ const UploadPage: React.FC = () => {
     setSuccessMessage(null);
     setLoading(true);
 
-    // Basic Validation (more can be added)
-    if (!title || !artistName || !coverFile || !audioFile) {
-      setError(t('validation_allFieldsRequired')); // Assuming this key exists or will be added
+    // Client-Side Validation
+    if (!title || !artistName || !price || !coverFile || !audioFile) {
+      setError(t('validation_allFieldsRequired'));
+      setLoading(false);
+      return;
+    }
+    const priceValue = parseFloat(price);
+    if (isNaN(priceValue) || priceValue < 0) {
+      setError(t('validation_invalidPrice'));
       setLoading(false);
       return;
     }
 
-    const priceValue = parseFloat(price);
-    if (isNaN(priceValue) || priceValue < 0) {
-        setError(t('validation_invalidPrice', 'Price must be a valid non-negative number.')); // Add this key
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        setError(t('error_notAuthenticated'));
         setLoading(false);
+        router.push(`/${locale}/login`); // Redirect to login if not authenticated
         return;
-    }
+      }
 
-    console.log('Uploading song (static):', {
-      title,
-      artistName,
-      price: priceValue,
-      coverFile,
-      audioFile,
-    });
+      const songId = crypto.randomUUID();
 
-    // Simulate API call for now
-    setTimeout(() => {
-      setSuccessMessage(t('upload_successful_placeholder', 'Song submitted for review!')); // Add this key
-      setLoading(false);
-      // Reset form (optional)
+      // 1. Upload Cover Image
+      const coverPath = `public/${user.id}/${songId}-${coverFile.name}`;
+      const { data: coverUploadData, error: coverUploadError } = await supabase.storage
+        .from('song-covers')
+        .upload(coverPath, coverFile);
+
+      if (coverUploadError) {
+        throw new Error(`${t('error_coverUploadFailed')} ${coverUploadError.message}`);
+      }
+      const { data: { publicUrl: coverPublicUrl } } = supabase.storage
+        .from('song-covers')
+        .getPublicUrl(coverPath);
+
+      if (!coverPublicUrl) {
+        throw new Error(t('error_coverUploadFailed', "Could not get public URL for cover."));
+      }
+
+      // 2. Upload Audio File
+      const audioPath = `public/${user.id}/${songId}-${audioFile.name}`;
+      const { data: audioUploadData, error: audioUploadError } = await supabase.storage
+        .from('songs') // Bucket for audio files
+        .upload(audioPath, audioFile);
+
+      if (audioUploadError) {
+        // Attempt to delete already uploaded cover image if audio fails
+        await supabase.storage.from('song-covers').remove([coverPath]);
+        throw new Error(`${t('error_audioUploadFailed')} ${audioUploadError.message}`);
+      }
+      const { data: { publicUrl: audioPublicUrl } } = supabase.storage
+        .from('songs')
+        .getPublicUrl(audioPath);
+
+      if (!audioPublicUrl) {
+         // Attempt to delete already uploaded cover image if public URL fails
+        await supabase.storage.from('song-covers').remove([coverPath]);
+        await supabase.storage.from('songs').remove([audioPath]); // also audio file itself
+        throw new Error(t('error_audioUploadFailed', "Could not get public URL for audio."));
+      }
+
+      // 3. Insert Record into Database
+      const { error: insertError } = await supabase.from('songs').insert([
+        {
+          title,
+          artist_name: artistName,
+          price: priceValue,
+          song_url: audioPublicUrl,
+          cover_url: coverPublicUrl,
+          uploader_id: user.id,
+        },
+      ]);
+
+      if (insertError) {
+        // Attempt to delete uploaded files if database insert fails
+        await supabase.storage.from('song-covers').remove([coverPath]);
+        await supabase.storage.from('songs').remove([audioPath]);
+        throw new Error(`${t('error_databaseInsertFailed')} ${insertError.message}`);
+      }
+
+      // Handle Success
+      setSuccessMessage(t('upload_successful'));
       setTitle('');
       setArtistName('');
       setPrice('');
@@ -138,11 +197,15 @@ const UploadPage: React.FC = () => {
       setAudioFile(null);
       if (coverPreviewUrl) URL.revokeObjectURL(coverPreviewUrl);
       setCoverPreviewUrl(null);
-      if(coverFileRef.current) coverFileRef.current.value = "";
-      if(audioFileRef.current) audioFileRef.current.value = "";
+      if (coverFileRef.current) coverFileRef.current.value = '';
+      if (audioFileRef.current) audioFileRef.current.value = '';
 
-    }, 1500);
-    // Actual Supabase upload logic will be implemented in the next step
+    } catch (e: any) {
+      console.error("Upload process error:", e);
+      setError(e.message || t('error_generic_supabase'));
+    } finally {
+      setLoading(false);
+    }
   };
 
   const changeLanguage = (lng: string) => {

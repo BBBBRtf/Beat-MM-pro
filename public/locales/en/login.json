@@ -33,5 +33,10 @@
   "upload_audioFileLabel": "Audio File (MP3, WAV, etc.)",
   "upload_buttonText": "Upload Song",
   "validation_invalidPrice": "Price must be a valid non-negative number.",
-  "upload_successful_placeholder": "Song submitted for review!"
+  "upload_successful_placeholder": "Song submitted for review!",
+  "error_notAuthenticated": "You must be logged in to upload songs.",
+  "error_coverUploadFailed": "Cover image upload failed.",
+  "error_audioUploadFailed": "Audio file upload failed.",
+  "error_databaseInsertFailed": "Failed to save song details.",
+  "upload_successful": "Your song has been uploaded successfully!"
 }
