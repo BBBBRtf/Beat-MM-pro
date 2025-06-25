@@ -1,13 +1,14 @@
 'use client';
 
-'use client'; // Ensure this is at the top
+'use client';
 
 import React, { useState, useEffect } from 'react';
-import Link from 'next/link'; // For internal navigation, keep as is
-import { useRouter, useParams } from 'next/navigation'; // For changing locale path
+import Link from 'next/link';
+import { useRouter, useParams } from 'next/navigation';
 import { Container, Form, Button } from 'react-bootstrap';
 import { motion } from 'framer-motion';
-import { useTranslation } from '../../i18n/client'; // Adjusted path
+import { useTranslation } from '../../../i18n/client'; // Path updated as login page is now one level deeper
+import { PhoneIcon, LockClosedIcon } from '@heroicons/react/24/outline';
 
 const SUPER_ADMIN_PHONES = ['09787715620', '09424425049'];
 
@@ -41,12 +42,12 @@ const itemVariants = {
 const LoginPage: React.FC = () => {
   const params = useParams();
   const locale = params.locale as string;
-  const { t, i18n } = useTranslation('login'); // Specify 'login' namespace
+  const { t, i18n } = useTranslation('login');
   const router = useRouter();
 
   const [phoneNumber, setPhoneNumber] = useState('');
   const [password, setPassword] = useState('');
-  const [isSuperAdmin, setIsSuperAdmin] = useState(false);
+  const [isSuperAdmin, setIsSuperAdmin] = useState(false); // Keep super admin logic for now
 
   useEffect(() => {
     setIsSuperAdmin(SUPER_ADMIN_PHONES.includes(phoneNumber));
@@ -54,91 +55,100 @@ const LoginPage: React.FC = () => {
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Phone Number:', phoneNumber);
-    console.log('Password:', password);
-    // Actual Supabase login logic will be added later
+    console.log('Login attempt:', { phoneNumber, password });
+    // Backend logic later
   };
 
   const changeLanguage = (lng: string) => {
-    // i18n.changeLanguage(lng); // This updates i18next instance
-    router.push(`/${lng}/login`); // Change URL to reflect new language
+    router.push(`/${lng}/login`);
   };
 
-  // Determine which title to use
-  const pageTitle = isSuperAdmin ? t('superAdminPageTitle') : t('pageTitle');
+  const loginTitle = isSuperAdmin ? t('superAdminPageTitle') : t('login_welcomeTitle');
 
   return (
-    <Container fluid className="min-h-screen bg-black flex items-center justify-center p-4 overflow-hidden">
+    <Container fluid className="min-h-screen bg-gray-900 flex items-center justify-center p-4 overflow-hidden">
       <motion.div
-        className={`w-full max-w-md bg-gray-900 p-8 rounded-xl border border-gray-700 shadow-2xl ${isSuperAdmin ? 'shadow-yellow-500/30' : 'shadow-cyan-500/20'}`}
+        className="w-full max-w-md bg-beatmm-card rounded-lg shadow-lg p-8 space-y-6"
         variants={containerVariants}
         initial="hidden"
         animate="visible"
       >
         {/* Language Switcher */}
-        <motion.div className="text-center mb-6 space-x-2" variants={itemVariants}>
+        <motion.div className="text-center mb-4 space-x-2" variants={itemVariants}>
           <Button variant={locale === 'en' ? 'light' : 'outline-light'} size="sm" onClick={() => changeLanguage('en')}>EN</Button>
           <Button variant={locale === 'zh' ? 'light' : 'outline-light'} size="sm" onClick={() => changeLanguage('zh')}>中文</Button>
           <Button variant={locale === 'my' ? 'light' : 'outline-light'} size="sm" onClick={() => changeLanguage('my')}>MY</Button>
         </motion.div>
 
-        <motion.h1
-          className={`text-3xl font-bold text-center mb-8 ${isSuperAdmin ? 'text-yellow-400' : 'text-cyan-400'}`}
-          variants={itemVariants}
-        >
-          {pageTitle}
-        </motion.h1>
+        {/* Logo Placeholder */}
+        <motion.div className="text-center" variants={itemVariants}>
+          <div className="text-3xl font-bold text-white">BeatMM Pro</div>
+        </motion.div>
 
-        <Form onSubmit={handleLogin}>
+        {/* Welcome Title */}
+        <motion.h2 className="text-center text-white text-xl font-semibold" variants={itemVariants}>
+          {loginTitle}
+        </motion.h2>
+
+        <Form onSubmit={handleLogin} className="space-y-4">
+          {/* Phone Number Input */}
           <motion.div variants={itemVariants}>
-            <Form.Group className="mb-6" controlId="formPhoneNumber">
-              <Form.Label className="text-gray-400 mb-2 block text-sm font-medium">{t('phoneNumberLabel')}</Form.Label>
-              <Form.Control
-                type="tel"
-                placeholder={t('phoneNumberLabel')}
-                value={phoneNumber}
-                onChange={(e) => setPhoneNumber(e.target.value)}
-                className="bg-gray-800 border-0 border-b-2 border-gray-600 text-gray-200 text-sm focus:ring-0 focus:border-cyan-500 block w-full p-3 placeholder-gray-500 transition-colors duration-300"
-                required
-              />
+            <Form.Group controlId="formLoginPhoneNumber">
+              <Form.Label className="sr-only">{t('phoneNumberLabel')}</Form.Label>
+              <div className="flex items-center bg-gray-700 rounded px-3 py-2">
+                <PhoneIcon className="h-5 w-5 text-gray-400 mr-3" /> {/* Increased margin for icon */}
+                <Form.Control
+                  type="tel"
+                  placeholder={t('phoneNumberLabel')}
+                  value={phoneNumber}
+                  onChange={(e) => setPhoneNumber(e.target.value)}
+                  className="bg-transparent focus:outline-none text-white w-full border-0 p-0" // Removed default padding from Form.Control
+                  required
+                />
+              </div>
             </Form.Group>
           </motion.div>
 
+          {/* Password Input */}
           <motion.div variants={itemVariants}>
-            <Form.Group className="mb-6" controlId="formPassword">
-              <Form.Label className="text-gray-400 mb-2 block text-sm font-medium">{t('passwordLabel')}</Form.Label>
-              <Form.Control
-                type="password"
-                placeholder={t('passwordLabel')}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="bg-gray-800 border-0 border-b-2 border-gray-600 text-gray-200 text-sm focus:ring-0 focus:border-cyan-500 block w-full p-3 placeholder-gray-500 transition-colors duration-300"
-                required
-              />
+            <Form.Group controlId="formLoginPassword">
+              <Form.Label className="sr-only">{t('passwordLabel')}</Form.Label>
+              <div className="flex items-center bg-gray-700 rounded px-3 py-2">
+                <LockClosedIcon className="h-5 w-5 text-gray-400 mr-3" /> {/* Increased margin for icon */}
+                <Form.Control
+                  type="password"
+                  placeholder={t('passwordLabel')}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="bg-transparent focus:outline-none text-white w-full border-0 p-0" // Removed default padding
+                  required
+                />
+              </div>
             </Form.Group>
           </motion.div>
 
+          {/* Forgot Password Link */}
+          <motion.div className="text-right" variants={itemVariants}>
+            <Link href="#" className="text-sm text-blue-400 hover:underline">
+              {t('login_forgotPasswordLink')}
+            </Link>
+          </motion.div>
+
+          {/* Login Button */}
           <motion.div variants={itemVariants}>
             <Button
               type="submit"
-              className={`w-full font-semibold py-3 px-4 rounded-md text-white transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-black
-                ${isSuperAdmin
-                  ? 'bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 hover:from-yellow-500 hover:to-yellow-700 focus:ring-yellow-400'
-                  : 'bg-cyan-600 hover:bg-cyan-700 focus:ring-cyan-500'
-                }`}
+              className="w-full py-2.5 rounded-md bg-gradient-primary text-white font-semibold hover:opacity-90 transition-opacity duration-300" // py-2.5 for a bit more height
             >
               {t('loginButton')}
             </Button>
           </motion.div>
         </Form>
 
-        <motion.p
-          className="text-sm text-gray-500 mt-8 text-center"
-          variants={itemVariants}
-        >
+        {/* Register Link Footer */}
+        <motion.p className="text-sm text-gray-400 mt-6 text-center" variants={itemVariants}>
           {t('registerPrompt')}{' '}
-          {/* Using Link from next/link for client-side navigation to a potentially non-localized route for now */}
-          <Link href="/register" className="font-medium text-cyan-400 hover:text-cyan-300">
+          <Link href={`/${locale}/register`} className="font-medium text-cyan-400 hover:text-cyan-300">
             {t('registerLink')}
           </Link>
         </motion.p>

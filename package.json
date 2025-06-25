@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@heroicons/react": "^2.2.0",
     "framer-motion": "^12.19.1",
     "i18next": "^25.2.1",
     "next-i18next": "^15.4.2",

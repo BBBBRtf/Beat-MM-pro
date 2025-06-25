@@ -16,5 +16,7 @@
   "home_pageTitle": "BeatMM Pro မှ ကြိုဆိုပါတယ်",
   "profile_pageTitle": "အသုံးပြုသူအချက်အလက်",
   "upload_pageTitle": "ဂီတ/ဗီဒီယိုတင်ရန်",
-  "live_pageTitle": "တိုက်ရိုက်ထုတ်လွှင့်မှု"
+  "live_pageTitle": "တိုက်ရိုက်ထုတ်လွှင့်မှု",
+  "login_welcomeTitle": "BeatMM Pro သို့ ပြန်လာရန် ကြိုဆိုပါတယ်",
+  "login_forgotPasswordLink": "လျှို့ဝှက်နံပါတ် မေ့ပါသလား?"
 }

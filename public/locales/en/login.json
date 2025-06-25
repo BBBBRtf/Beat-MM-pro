@@ -16,5 +16,7 @@
   "home_pageTitle": "Welcome to BeatMM Pro",
   "profile_pageTitle": "User Profile",
   "upload_pageTitle": "Upload Music/Video",
-  "live_pageTitle": "Live Streams"
+  "live_pageTitle": "Live Streams",
+  "login_welcomeTitle": "Welcome back to BeatMM Pro",
+  "login_forgotPasswordLink": "Forgot password?"
 }

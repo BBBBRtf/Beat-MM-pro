@@ -16,5 +16,7 @@
   "home_pageTitle": "欢迎来到 BeatMM Pro",
   "profile_pageTitle": "用户资料",
   "upload_pageTitle": "上传音乐/视频",
-  "live_pageTitle": "直播"
+  "live_pageTitle": "直播",
+  "login_welcomeTitle": "欢迎回到 BeatMM Pro",
+  "login_forgotPasswordLink": "忘记密码？"
 }
