@@ -24,5 +24,14 @@
   "login_invalidCredentials": "Invalid phone number or password.",
   "registration_successful": "Registration successful! Please log in.",
   "error_generic_supabase": "An error occurred. Please try again.",
-  "loading": "Loading..."
+  "loading": "Loading...",
+  "upload_pageTitle": "Upload Your Music",
+  "upload_songTitleLabel": "Song Title",
+  "upload_artistNameLabel": "Artist Name (DJ Name)",
+  "upload_priceLabel": "Price (Leave 0 if free)",
+  "upload_coverImageLabel": "Cover Image",
+  "upload_audioFileLabel": "Audio File (MP3, WAV, etc.)",
+  "upload_buttonText": "Upload Song",
+  "validation_invalidPrice": "Price must be a valid non-negative number.",
+  "upload_successful_placeholder": "Song submitted for review!"
 }

@@ -24,5 +24,14 @@
   "login_invalidCredentials": "ဖုန်းနံပါတ် သို့မဟုတ် စကားဝှက် မှားယွင်းနေသည်။",
   "registration_successful": "မှတ်ပုံတင်ခြင်းအောင်မြင်ပါပြီ! ကျေးဇူးပြု၍ လော့ဂ်အင်ဝင်ပါ။",
   "error_generic_supabase": "အမှားအယွင်းတစ်ခု ဖြစ်ပွားခဲ့သည်။ ကျေးဇူးပြု၍ နောက်တစ်ကြိမ်ကြိုးစားပါ။",
-  "loading": "တင်နေသည်..."
+  "loading": "တင်နေသည်...",
+  "upload_pageTitle": "သင်၏ဂီတကိုတင်ပါ။",
+  "upload_songTitleLabel": "သီချင်းခေါင်းစဉ်",
+  "upload_artistNameLabel": "အနုပညာရှင်အမည် (DJ အမည်)",
+  "upload_priceLabel": "စျေးနှုန်း (အခမဲ့ဖြစ်ပါက ০ ထားခဲ့ပါ)",
+  "upload_coverImageLabel": "အဖုံးပုံ",
+  "upload_audioFileLabel": "အသံဖိုင် (MP3, WAV, etc.)",
+  "upload_buttonText": "သီချင်းတင်ပါ။",
+  "validation_invalidPrice": "စျေးနှုန်းသည် မှန်ကန်သော အနုတ်မဟုတ်သော ကိန်းဂဏန်းဖြစ်ရမည်။",
+  "upload_successful_placeholder": "သီချင်းကို ပြန်လည်သုံးသပ်ရန် တင်သွင်းပြီးပါပြီ။"
 }

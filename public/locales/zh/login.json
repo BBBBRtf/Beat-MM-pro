@@ -24,5 +24,14 @@
   "login_invalidCredentials": "无效的手机号码或密码。",
   "registration_successful": "注册成功！请登录。",
   "error_generic_supabase": "发生错误，请重试。",
-  "loading": "加载中..."
+  "loading": "加载中...",
+  "upload_pageTitle": "上传您的音乐",
+  "upload_songTitleLabel": "歌曲名称",
+  "upload_artistNameLabel": "艺术家名称 (DJ名)",
+  "upload_priceLabel": "价格 (如果免费请填0)",
+  "upload_coverImageLabel": "封面图片",
+  "upload_audioFileLabel": "音频文件 (MP3, WAV等)",
+  "upload_buttonText": "上传歌曲",
+  "validation_invalidPrice": "价格必须是有效的非负数。",
+  "upload_successful_placeholder": "歌曲已提交审核！"
 }
