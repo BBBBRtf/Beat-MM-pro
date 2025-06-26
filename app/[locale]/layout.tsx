@@ -1,4 +1,5 @@
-import '../globals.css'; // Corrected path to root app/globals.css
+import '@/app/globals.css'; // Using path alias
+import { ReactNode } from 'react'; // Ensuring ReactNode is imported if not already
 
 export const metadata = {
   title: 'BeatMM Pro',

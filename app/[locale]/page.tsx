@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { useParams } from 'next/navigation';
-import { useTranslation } from '../../i18n/client'; // Adjust path as necessary
+import { useTranslation } from '@/app/i18n/client'; // Using path alias
 import { Container } from 'react-bootstrap';
 // You might want a language switcher here too, or handle it globally in layout.
 // For simplicity, I'll omit it from these placeholder pages for now but it can be added.

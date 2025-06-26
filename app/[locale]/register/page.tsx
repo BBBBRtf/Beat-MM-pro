@@ -5,9 +5,9 @@ import Link from 'next/link';
 import { useRouter, useParams } from 'next/navigation';
 import { Container, Form, Button, Alert } from 'react-bootstrap';
 import { motion } from 'framer-motion';
-import { useTranslation } from '../../../i18n/client';
+import { useTranslation } from '@/app/i18n/client'; // Using path alias
 import { UserIcon, PhoneIcon, LockClosedIcon } from '@heroicons/react/24/outline';
-import { createSupabaseBrowserClient } from '../../../lib/supabase/client'; // Import Supabase client
+import { createSupabaseBrowserClient } from '@/lib/supabase/client'; // Using path alias
 
 // Animation Variants
 const containerVariants = {
