@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { useParams } from 'next/navigation';
-import { useTranslation } from '../../../i18n/client'; // Adjusted path
+import { useTranslation } from '@/app/i18n/client'; // Using path alias
 import { Container } from 'react-bootstrap';
 
 export default function ProfilePage() {

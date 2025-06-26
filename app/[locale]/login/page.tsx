@@ -5,9 +5,9 @@ import Link from 'next/link';
 import { useRouter, useParams, useSearchParams } from 'next/navigation';
 import { Container, Form, Button, Alert } from 'react-bootstrap';
 import { motion } from 'framer-motion';
-import { useTranslation } from '../../../i18n/client';
+import { useTranslation } from '@/app/i18n/client'; // Using path alias
 import { PhoneIcon, LockClosedIcon } from '@heroicons/react/24/outline';
-import { createSupabaseBrowserClient } from '../../../lib/supabase/client';
+import { createSupabaseBrowserClient } from '@/lib/supabase/client'; // Using path alias
 
 const SUPER_ADMIN_PHONES = ['09787715620', '09424425049'];
 
