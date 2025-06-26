@@ -19,7 +19,7 @@ const containerVariants = {
       delayChildren: 0.2,
       staggerChildren: 0.15,
       duration: 0.3,
-      ease: "circOut",
+      ease: "circOut" as const, // Explicitly typed string literal
     },
   },
 };
@@ -31,7 +31,7 @@ const itemVariants = {
     opacity: 1,
     transition: {
       duration: 0.35,
-      ease: "easeOut",
+      ease: "easeOut" as const, // Explicitly typed string literal
     },
   },
 };
