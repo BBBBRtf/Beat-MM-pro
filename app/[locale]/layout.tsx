@@ -1,4 +1,4 @@
-import './globals.css'; // Assuming a global CSS file might exist or be created later
+import '../globals.css'; // Corrected path to root app/globals.css
 
 export const metadata = {
   title: 'BeatMM Pro',
