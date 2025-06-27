@@ -17,13 +17,14 @@ i18next
     import(`../../public/locales/${language}/${namespace}.json`)
   ))
   .init({
-    ...getOptions(), // Spread default options
-    lng: undefined, // Let detector work or load from URL, will be set in useTranslationEffect
+    ...getOptions(), // Spread default options; lng will be defaultLocale ('zh') from here
+    // lng: undefined, // REMOVED: Let lng be initialized by getOptions() to defaultLocale on server
     detection: { // Optional, if using LanguageDetector
-      order: ['path', 'htmlTag', 'cookie', 'navigator'],
-      caches: ['cookie'],
+      order: ['path', 'htmlTag', 'cookie', 'navigator'], // Detection order for client-side
+      caches: ['cookie'], // Where to cache detected language on client
     },
-    preload: runsOnServerSide ? languages : [], // Preload languages on server, not on client
+    // preload: runsOnServerSide ? languages : [], // Original: Preload all languages on server
+    preload: runsOnServerSide ? [getOptions().lng] : [], // Optimized: Only preload the initial/default language on server
     // debug: process.env.NODE_ENV === 'development', // Enable for verbose logs
   });
 
