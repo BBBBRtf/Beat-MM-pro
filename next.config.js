@@ -3,19 +3,9 @@ const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
   i18n: {
-    locales: ['zh', 'en', 'my'],
-    defaultLocale: 'zh',
-    localeDetection: false,
-  },
-  async redirects() {
-    return [
-      {
-        source: '/',
-        destination: '/zh', // Redirect root to defaultLocale
-        permanent: false,   // Set to true if this is a permanent redirect
-        locale: false,      // This redirect is not locale-specific itself
-      },
-    ];
+    locales: ['zh', 'en', 'my'], // Ensure all your defined locales are here
+    defaultLocale: 'zh',       // Set your default locale
+    localeDetection: false,    // Prevents automatic locale detection for simpler routing
   },
 };
 
