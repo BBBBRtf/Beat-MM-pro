@@ -7,7 +7,7 @@ export const metadata = {
   description: 'The ultimate DJ music and live streaming community in Myanmar.',
 };
 
-export default function LocaleLayout({ // Renamed from RootLayout to avoid confusion
+export default function LocaleLayout({
   children,
   params,
 }: {
