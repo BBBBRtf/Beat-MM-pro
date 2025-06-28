@@ -1,22 +1,23 @@
-import '@/app/globals.css';
-import 'bootstrap/dist/css/bootstrap.min.css'; // Import Bootstrap CSS here as well for consistency
-import { ReactNode } from 'react';
+import type { Metadata } from 'next';
+import { Inter } from 'next/font/google';
+import './globals.css';
+import 'bootstrap/dist/css/bootstrap.min.css'; // This line is crucial for Bootstrap CSS!
 
-export const metadata = {
-  title: 'BeatMM Pro - Loading...',
-  description: 'Redirecting to your preferred language.',
+const inter = Inter({ subsets: ['latin'] });
+
+export const metadata: Metadata = {
+  title: 'BeatMM Pro',
+  description: 'The ultimate DJ music and live streaming community in Myanmar.',
 };
 
 export default function RootLayout({
   children,
-}: {
+}: Readonly<{
   children: React.ReactNode;
-}) {
+}>) {
   return (
     <html lang="en">
-      <body>
-        {children}
-      </body>
+      <body className={inter.className}>{children}</body>
     </html>
   );
 }
