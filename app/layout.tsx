@@ -1,4 +1,5 @@
 import '@/app/globals.css';
+import 'bootstrap/dist/css/bootstrap.min.css'; // Import Bootstrap CSS here as well for consistency
 import { ReactNode } from 'react';
 
 export const metadata = {
