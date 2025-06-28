@@ -2,9 +2,4 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Optional: Add any global base styles here */
-body {
-  /* Example: Antialiased fonts for better readability */
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
+/* Bootstrap CSS will now be imported in layout.tsx, so it's removed from here */
