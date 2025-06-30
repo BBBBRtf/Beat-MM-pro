@@ -1,0 +1,18 @@
+# Ignore Python virtual environment
+venv/
+
+# Ignore __pycache__ directories and .pyc files
+__pycache__/
+*.pyc
+
+# Ignore .env file (contains sensitive credentials)
+.env
+
+# Ignore other common Python cache/build artifacts if necessary
+.pytest_cache/
+.coverage
+htmlcov/
+*.egg-info/
+dist/
+build/
+*.log
